@@ -1,0 +1,21 @@
+#!/usr/bin/env python2
+
+import sys
+
+import pygtk
+pygtk.require('2.0')
+import gtk
+
+from xpybutil import conn, root
+import xpybutil.ewmh as ewmh
+
+import pagermh.state as state
+import pagermh.pager as pager
+import pagermh.client as client
+
+state.gtk_rootwin.connect('property_notify_event', state.cb_prop_change)
+state.gtk_rootwin.connect('property_notify_event', client.cb_prop_change)
+state.gtk_rootwin.connect('property_notify_event', pager.cb_prop_change)
+
+gtk.main()
+
