@@ -124,7 +124,7 @@ class Prompt(object):
 
         self.widgets = []
         self.labels = []
-        self.hilite = -1
+        self.hilite = None
 
         text = self.entry.get_text().lower()
         ml = config.prompt_max_length
@@ -198,9 +198,15 @@ class Prompt(object):
     def do_hilite(self, widget, e):
         if e.hardware_keycode == 23:
             if e.state & gtk.gdk.SHIFT_MASK:
-                self.hilite = (self.hilite - 1) % len(self.labels)
+                if self.hilite is None:
+                    self.hilite = len(self.labels) - 1
+                else:
+                    self.hilite = (self.hilite - 1) % len(self.labels)
             else:
-                self.hilite = (self.hilite + 1) % len(self.labels)
+                if self.hilite is None:
+                    self.hilite = 0
+                else:
+                    self.hilite = (self.hilite + 1) % len(self.labels)
 
             ml = config.prompt_max_length
             for i, (lab, content, data) in enumerate(self.labels):
