@@ -174,7 +174,7 @@ class Desktop(object):
         if self.label is not None:
             if self.desk == state.desktop:
                 markup = config.active_name_markup
-            elif self.desk in state.visibles:
+            elif state.visibles and self.desk in state.visibles:
                 markup = config.visible_name_markup
             else:
                 markup = config.hidden_name_markup
@@ -194,7 +194,7 @@ class Desktop(object):
 
         if self.desk == state.desktop:
             self.gc.foreground = self.color(config.active_desk_color)
-        elif self.desk in state.visibles:
+        elif state.visibles and self.desk in state.visibles:
             self.gc.foreground = self.color(config.visible_desk_color)
         else:
             self.gc.foreground = self.color(config.hidden_desk_color)
