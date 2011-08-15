@@ -133,9 +133,7 @@ def cb_prop_change(widget, e):
         stacking = ewmh.get_client_list_stacking(conn, root).reply()
     elif e.atom == '_NET_VISIBLE_DESKTOPS':
         visibles = ewmh.get_visible_desktops(conn, root).reply()
-    elif e.atom == '_NET_NUMBER_OF_DESKTOPS':
-        desk_num = ewmh.get_number_of_desktops(conn, root).reply()
-    elif e.atom == '_NET_DESKTOP_NAMES':
+    elif e.atom in ('_NET_DESKTOP_NAMES', '_NET_NUMBER_OF_DESKTOPS'):
         desk_num = ewmh.get_number_of_desktops(conn, root).reply()
         desk_names = ewmh.get_desktop_names(conn, root).reply()
 
