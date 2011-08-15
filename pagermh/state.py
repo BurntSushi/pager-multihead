@@ -16,6 +16,7 @@ while not wmrunning:
             wmrunning = True
             wmname = ewmh.get_wm_name(conn, childw).reply()
             print '%s window manager is running...' % wmname
+            sys.stdout.flush()
 
     time.sleep(1)
 

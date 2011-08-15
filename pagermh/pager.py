@@ -62,8 +62,7 @@ def init():
     # We are a little bit smart, though... We'll account for dead area.
     # This does not allow for between-monitor struts... For another day!
     if config.struts:
-        wx, wy = _window.get_position()
-        ww, wh = _window.get_size()
+        wx, wy, ww, wh = config.x, config.y, config.width, config.height
         mx, my, mw, mh = state.get_monitor_area((wx, wy, ww, wh))
         rw, rh = state.root_geom['width'], state.root_geom['height']
 
