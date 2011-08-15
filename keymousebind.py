@@ -73,7 +73,8 @@ def mk_prompt_windows():
 
         if isinstance(wid, int):
             wdesk = ewmh.get_wm_desktop(conn, wid).reply()
-            if wdesk not in ewmh.get_visible_desktops(conn, root).reply():
+            visibles = ewmh.get_visible_desktops(conn, root).reply()
+            if not visibles or wdesk not in visibles:
                 ewmh.request_current_desktop_checked(conn, wdesk).check()
             ewmh.request_active_window_checked(conn, wid, source=2).check()
 
