@@ -97,6 +97,8 @@ def init():
                                           **struts).check()
 
 def update_desktop_order():
+    if not state.visibles:
+        return
     for physind, xscreen in enumerate(state.xtophys):
         for d in desktops:
             if d.desk == state.visibles[xscreen]:
