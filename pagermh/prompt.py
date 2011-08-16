@@ -63,7 +63,7 @@ class Prompt(object):
 
         self.widgets = []
         self.labels = []
-        self.hilite = -1
+        self.hilite = None 
 
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.connect('delete_event', self.destroy)
@@ -221,7 +221,7 @@ class Prompt(object):
         self.last_text = self.entry.get_text()
 
     def do_result_fun(self, *args, **kwargs):
-        if self.hilite != -1:
+        if self.hilite != None:
             _, _, content = self.labels[self.hilite]
         elif len(self.labels) == 1:
             _, _, content = self.labels[0]
