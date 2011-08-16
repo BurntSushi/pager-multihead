@@ -38,6 +38,7 @@ def init():
     keybinds['<Super>Return'] = mk_prompt_desktop()
     keybinds['<Super><Shift>Return'] = prompt_set_activewin_desktop
     
+    keybinds['<Super><Alt>space'] = mk_prompt_all_windows()
     keybinds['<Super>space'] = mk_prompt_windows()
 
 
@@ -62,22 +63,10 @@ def mk_prompt_desktop():
     return partial(prompt.desktops, set_or_add_desktop)
 
 def mk_prompt_windows():
-    def goto_window(win_name_or_id):
-        wid = win_name_or_id
-        if isinstance(wid, basestring):
-            clients = ewmh.get_client_list(conn, root).reply()
-            for c in clients:
-                if wid == ewmh.get_wm_name(conn, c).reply():
-                    wid = c
-                    break
+    return partial(prompt.windows, goto_window, prefix_complete=False,
+                   homogenous=False, current_desk=True)
 
-        if isinstance(wid, int):
-            wdesk = ewmh.get_wm_desktop(conn, wid).reply()
-            visibles = ewmh.get_visible_desktops(conn, root).reply()
-            if not visibles or wdesk not in visibles:
-                ewmh.request_current_desktop_checked(conn, wdesk).check()
-            ewmh.request_active_window_checked(conn, wid, source=2).check()
-
+def mk_prompt_all_windows():
     return partial(prompt.windows, goto_window)
 
 def set_desktop(i_or_name):
@@ -138,6 +127,21 @@ def remove_empty_current_desktop():
 
     ndesks = ewmh.get_number_of_desktops(conn, root).reply()
     ewmh.request_number_of_desktops_checked(conn, ndesks - 1).check()
+
+def goto_window(win_name_or_id):
+    wid = win_name_or_id
+    if isinstance(wid, basestring):
+        clients = ewmh.get_client_list(conn, root).reply()
+        for c in clients:
+            if wid == ewmh.get_wm_name(conn, c).reply():
+                wid = c
+                break
+
+    if isinstance(wid, int):
+        wdesk = ewmh.get_wm_desktop(conn, wid).reply()
+        if wdesk not in ewmh.get_visible_desktops(conn, root).reply():
+            ewmh.request_current_desktop_checked(conn, wdesk).check()
+        ewmh.request_active_window_checked(conn, wid, source=2).check()
 
 def get_desk(i_or_name):
     if isinstance(i_or_name, int):
