@@ -148,9 +148,16 @@ def get_desk(i_or_name):
     nextdesk = None
     names = ewmh.get_desktop_names(conn, root).reply()
     ci = ewmh.get_current_desktop(conn, root).reply()
+    visibles = ewmh.get_visible_desktops(conn, root).reply()
 
     cname = names[ci] if ci < len(names) else ''
-    fnames = filter(lambda n: n.lower().startswith(i_or_name.lower()), names)
+    fnames = names[:]
+
+    if visibles:
+        fnames = [nm for i, nm in
+                  filter(lambda (i, nm): i not in visibles, enumerate(fnames))]
+
+    fnames = filter(lambda n: n.lower().startswith(i_or_name.lower()), fnames)
     fnames = sorted(fnames)
 
     if cname in fnames:
