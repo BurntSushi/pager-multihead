@@ -29,15 +29,18 @@ def desktops(result_fun, prefix_complete=True, homogenous=True):
     currentPrompt = Prompt({ None: sorted(lst) }, result_fun, prefix_complete,
                            homogenous)
 
-def windows(result_fun, prefix_complete=False, homogenous=False):
+def windows(result_fun, prefix_complete=False, homogenous=False, 
+            current_desk=False):
     global currentPrompt
-
 
     desks = range(0, ewmh.get_number_of_desktops(conn, root).reply())
     names = ewmh.get_desktop_names(conn, root).reply()
 
     content = {}
     for d in desks:
+        if current_desk and state.desktop != d:
+            continue
+
         name = d
         if d < len(names):
             name = names[d]
