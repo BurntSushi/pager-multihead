@@ -49,7 +49,7 @@ pager_bgcolor = '#ffffff'
 # The spacing (in pixles) between each mini-desktop picture
 desk_margin = 5
 
-# The color of any borders used
+# The color of a mini-desktop picture border
 desk_bordercolor = '#000000'
 
 # Color of a window that is active
@@ -57,6 +57,9 @@ active_window_color = '#5f5fad'
 
 # Color of a window that is not active
 window_color = '#d67575'
+
+# Color of a border drawn around a window
+window_border_color = '#000000'
 
 # Three different categories of desktops:
 # A desktop that is active.
