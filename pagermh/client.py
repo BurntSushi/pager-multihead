@@ -60,7 +60,18 @@ class Client(object):
                             | gtk.gdk.STRUCTURE_MASK)
         self.gdk.set_user_data(self.invis)
         self.invis.connect('property_notify_event', self.cb_prop_change)
-        self.invis.connect('configure_event', self.cb_configure)
+
+        # This is interesting; look for configure events on the decor window
+        if state.wmname.lower() == 'openbox':
+            pid = util.get_parent_window(conn, self.wid)
+            pgdk = gtk.gdk.window_foreign_new_for_display(state.gtk_display,
+                                                          pid)
+            pinvis = gtk.Invisible()
+            pgdk.set_events(gtk.gdk.STRUCTURE_MASK)
+            pgdk.set_user_data(pinvis)
+            pinvis.connect('configure_event', self.cb_configure)
+        else:
+            self.invis.connect('configure_event', self.cb_configure)
 
         self.update_state()
 
