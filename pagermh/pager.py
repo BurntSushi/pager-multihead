@@ -107,7 +107,9 @@ def update_desktop_order():
 
 def update(d):
     if d < len(desktops):
-        desktops[d].update()
+        for desk in desktops:
+            if desk.desk == d:
+                desk.update()
 
 def update_all():
     for d in desktops:
@@ -198,7 +200,8 @@ class Desktop(object):
             self.gc.foreground = self.color(config.visible_desk_color)
         else:
             self.gc.foreground = self.color(config.hidden_desk_color)
-        self.area.window.draw_rectangle(self.gc, True, x + 1, y + 1, w - 1, h - 1)
+        self.area.window.draw_rectangle(self.gc, True, x + 1, y + 1, 
+                                        w - 1, h - 1)
 
         toint = lambda f: int(round(f))
 
@@ -210,11 +213,6 @@ class Desktop(object):
 
             if c.desk != self.desk or c.hidden:
                 continue
-
-            if c.wid == state.activewin:
-                self.gc.foreground = self.color(config.active_window_color)
-            else:
-                self.gc.foreground = self.color(config.window_color)
 
             mx, my, mw, mh = c.get_monitor_area()
 
@@ -245,7 +243,16 @@ class Desktop(object):
             dw = max(1, dw)
             dh = max(1, dh)
 
-            self.area.window.draw_rectangle(self.gc, True, dx, dy, dw, dh)
+            self.gc.foreground = self.color(config.window_border_color)
+            self.area.window.draw_rectangle(self.gc, False, dx, dy, dw, dh)
+
+            if c.wid == state.activewin:
+                self.gc.foreground = self.color(config.active_window_color)
+            else:
+                self.gc.foreground = self.color(config.window_color)
+
+            self.area.window.draw_rectangle(self.gc, True, 
+                                            dx + 1, dy + 1, dw - 1, dh - 1)
 
     def get_pos_size(self):
         if self.area.window is None:
