@@ -18,7 +18,8 @@ while not wmrunning:
             print '%s window manager is running...' % wmname
             sys.stdout.flush()
 
-    time.sleep(1)
+    if not wmrunning:
+        time.sleep(1)
 
 import xcb.xinerama
 
