@@ -12,6 +12,11 @@ import xpybutil.ewmh as ewmh
 desktops = ['1', '2', '3', '4', '5', '6']
 # desktops = map(str, range(1, 10)) 
 
+# If this is true, then the desktop names above will overwrite any existing
+# desktops upon startup. This can get annoying if you stop and then run the
+# pager.
+force_desktops = False
+
 # Whether to show desktop names below each mini-desktop picture
 show_desk_names = True
 
