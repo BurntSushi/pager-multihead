@@ -37,11 +37,12 @@ gtk_root.set_user_data(gtk_rootwin)
 gtk_root.set_events(gtk.gdk.PROPERTY_CHANGE_MASK | gtk.gdk.KEY_PRESS_MASK)
 
 # Initial setup
-ewmh.set_desktop_names_checked(conn, root, config.desktops).check()
-ewmh.set_desktop_layout_checked(conn, root, ewmh.Orientation.Horz, 
-                                len(config.desktops), 1, 
-                                ewmh.StartingCorner.TopLeft).check()
-ewmh.request_number_of_desktops_checked(conn, len(config.desktops)).check()
+if config.desktops:
+    ewmh.set_desktop_names_checked(conn, root, config.desktops).check()
+    ewmh.set_desktop_layout_checked(conn, root, ewmh.Orientation.Horz, 
+                                    len(config.desktops), 1, 
+                                    ewmh.StartingCorner.TopLeft).check()
+    ewmh.request_number_of_desktops_checked(conn, len(config.desktops)).check()
 
 # Is this a horizontal or vertical pager?
 if config.width > config.height:
@@ -110,16 +111,6 @@ def update_monitor_area():
     for x, y, xscreen in sorted(screenpos):
         xtophys.append(xscreen)
 
-# def cb_keypress(widget, e): 
-    # print 'hey-oh' 
-
-def cb_keypress(event):
-    print 'hey-oh'
-    print event.type
-    print '-' * 80
-    sys.stdout.flush()
-    return gtk.gdk.FILTER_CONTINUE
-
 def cb_prop_change(widget, e):
     global activewin, desk_names, desk_num, desktop, stacking, visibles
 
@@ -144,7 +135,6 @@ def cb_prop_change(widget, e):
             names = desk_names[0:desk_num]
             ewmh.set_desktop_names_checked(conn, root, names).check()
         desk_names = ewmh.get_desktop_names(conn, root).reply()
-
 
 update_monitor_area()
     
