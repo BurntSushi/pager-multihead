@@ -125,6 +125,13 @@ def remove_empty_current_desktop():
         names.pop(cur)
         ewmh.set_desktop_names_checked(conn, root, names).check()
 
+    # Subtract one from every client's desktop above the current one
+    for c in clients:
+        cdesk = ewmh.get_wm_desktop(conn, c).reply()
+        if cdesk > cur and cdesk != 0xffffffff:
+            print ewmh.get_wm_name(conn, c).reply(), cdesk
+            ewmh.set_wm_desktop_checked(conn, c, cdesk - 1).check()
+
     ndesks = ewmh.get_number_of_desktops(conn, root).reply()
     ewmh.request_number_of_desktops_checked(conn, ndesks - 1).check()
 
