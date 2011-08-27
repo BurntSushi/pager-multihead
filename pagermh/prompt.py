@@ -6,6 +6,7 @@ import pango
 
 from xpybutil import conn, root
 import xpybutil.ewmh as ewmh
+import xpybutil.icccm as icccm
 
 import config
 import state
@@ -53,7 +54,12 @@ def windows(result_fun, prefix_complete=False, homogenous=False,
         if nm < len(names):
             nm = names[nm]
         if nm in content:
-            content[nm].append((ewmh.get_wm_name(conn, c).reply() or '', c))
+            wm_name = ewmh.get_wm_name(conn, c).reply()
+            if not wm_name:
+                wm_name = icccm.get_wm_name(conn, c).reply()
+            if not wm_name or not isinstance(wm_name, basestring):
+                wm_name = 'N/A'
+            content[nm].append((wm_name, c))
 
     currentPrompt = Prompt(content, result_fun, prefix_complete, homogenous)
 
