@@ -53,7 +53,7 @@ def windows(result_fun, prefix_complete=False, homogenous=False,
         if nm < len(names):
             nm = names[nm]
         if nm in content:
-            content[nm].append((ewmh.get_wm_name(conn, c).reply(), c))
+            content[nm].append((ewmh.get_wm_name(conn, c).reply() or '', c))
 
     currentPrompt = Prompt(content, result_fun, prefix_complete, homogenous)
 
