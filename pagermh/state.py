@@ -107,7 +107,7 @@ def update_monitor_area():
 
     for i, m in enumerate(xinerama.QueryScreens().reply().screen_info):
         monitors.append((m.x_org, m.y_org, m.width, m.height))
-        screenpos.append((m.y_org, m.x_org, i))
+        screenpos.append((m.x_org, m.y_org, i))
     for x, y, xscreen in sorted(screenpos):
         xtophys.append(xscreen)
 
