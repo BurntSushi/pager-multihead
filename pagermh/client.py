@@ -62,7 +62,7 @@ class Client(object):
 
         # This is interesting; look for configure events on the decor window
         if state.wmname.lower() == 'openbox':
-            pid = util.get_parent_window(self.wid)
+            pid = window.get_parent_window(self.wid)
             pgdk = gtk.gdk.window_foreign_new_for_display(state.gtk_display,
                                                           pid)
             pinvis = gtk.Invisible()
