@@ -1,6 +1,5 @@
 from functools import partial
 
-from xpybutil import conn, root
 import xpybutil.ewmh as ewmh
 
 import prompt
@@ -47,7 +46,7 @@ def init():
 
 # There isn't much here yet, other than when one clicks on mini-desktop picture.
 def desktop_clicked(desktop):
-    ewmh.request_current_desktop_checked(conn, desktop.desk).check()
+    ewmh.request_current_desktop_checked(desktop.desk).check()
 
 
 # HELPER FUNCTIONS
@@ -72,40 +71,40 @@ def mk_prompt_all_windows():
 def set_desktop(i_or_name):
     nextdesk = get_desk(i_or_name)
     if nextdesk is not None:
-        ewmh.request_current_desktop_checked(conn, nextdesk).check()
+        ewmh.request_current_desktop_checked(nextdesk).check()
 
 def set_activewin_desktop(i_or_name):
-    awin = ewmh.get_active_window(conn, root).reply()
+    awin = ewmh.get_active_window().reply()
 
     set_win_desktop(i_or_name, awin)
 
 def set_win_desktop(i_or_name, win):
     nextdesk = get_desk(i_or_name)
     if None not in (nextdesk, win):
-        ewmh.request_wm_desktop_checked(conn, win, nextdesk, 2).check()
+        ewmh.request_wm_desktop_checked(win, nextdesk, 2).check()
 
 def set_or_add_desktop(name):
-    names = ewmh.get_desktop_names(conn, root).reply()
+    names = ewmh.get_desktop_names().reply()
 
     if name not in names:
         names.append(name)
-        ewmh.set_desktop_names_checked(conn, root, names).check()
-        num_desks = ewmh.get_number_of_desktops(conn, root).reply()
-        ewmh.request_number_of_desktops_checked(conn, num_desks + 1).check()
+        ewmh.set_desktop_names_checked(names).check()
+        num_desks = ewmh.get_number_of_desktops().reply()
+        ewmh.request_number_of_desktops_checked(num_desks + 1).check()
 
-    ewmh.request_current_desktop_checked(conn, names.index(name)).check()
+    ewmh.request_current_desktop_checked(names.index(name)).check()
 
 def prompt_set_activewin_desktop():
-    activewin = ewmh.get_active_window(conn, root).reply()
+    activewin = ewmh.get_active_window().reply()
     def fun(name):
-        names = ewmh.get_desktop_names(conn, root).reply()
+        names = ewmh.get_desktop_names().reply()
         if name not in names:
             names.append(name)
-            ewmh.set_desktop_names_checked(conn, root, names).check()
-            num_desks = ewmh.get_number_of_desktops(conn, root).reply()
-            ewmh.request_number_of_desktops_checked(conn, num_desks + 1).check()
+            ewmh.set_desktop_names_checked(names).check()
+            num_desks = ewmh.get_number_of_desktops().reply()
+            ewmh.request_number_of_desktops_checked(num_desks + 1).check()
 
-        ewmh.request_wm_desktop_checked(conn, activewin, 
+        ewmh.request_wm_desktop_checked(activewin, 
                                         names.index(name), 2).check()
 
     prompt.desktops(fun)
@@ -114,40 +113,40 @@ def remove_empty_current_desktop():
     # This isn't as straight-forward as decrementing _NET_NUMBER_OF_DESKTOPS.
     # We need to make sure we remove the right name, too.
     # AND only do it if there are no clients on this desktop.
-    clients = ewmh.get_client_list(conn, root).reply()
-    cur = ewmh.get_current_desktop(conn, root).reply()
+    clients = ewmh.get_client_list().reply()
+    cur = ewmh.get_current_desktop().reply()
     for c in clients:
-        if ewmh.get_wm_desktop(conn, c).reply() == cur:
+        if ewmh.get_wm_desktop(c).reply() == cur:
             return
 
-    names = ewmh.get_desktop_names(conn, root).reply()
+    names = ewmh.get_desktop_names().reply()
     if cur < len(names):
         names.pop(cur)
-        ewmh.set_desktop_names_checked(conn, root, names).check()
+        ewmh.set_desktop_names_checked(names).check()
 
     # Subtract one from every client's desktop above the current one
     for c in clients:
-        cdesk = ewmh.get_wm_desktop(conn, c).reply()
+        cdesk = ewmh.get_wm_desktop(c).reply()
         if cdesk > cur and cdesk != 0xffffffff:
-            ewmh.set_wm_desktop_checked(conn, c, cdesk - 1).check()
+            ewmh.set_wm_desktop_checked(c, cdesk - 1).check()
 
-    ndesks = ewmh.get_number_of_desktops(conn, root).reply()
-    ewmh.request_number_of_desktops_checked(conn, ndesks - 1).check()
+    ndesks = ewmh.get_number_of_desktops().reply()
+    ewmh.request_number_of_desktops_checked(ndesks - 1).check()
 
 def goto_window(win_name_or_id):
     wid = win_name_or_id
     if isinstance(wid, basestring):
-        clients = ewmh.get_client_list(conn, root).reply()
+        clients = ewmh.get_client_list().reply()
         for c in clients:
-            if wid == ewmh.get_wm_name(conn, c).reply():
+            if wid == ewmh.get_wm_name(c).reply():
                 wid = c
                 break
 
     if isinstance(wid, int):
-        wdesk = ewmh.get_wm_desktop(conn, wid).reply()
-        if wdesk not in ewmh.get_visible_desktops(conn, root).reply():
-            ewmh.request_current_desktop_checked(conn, wdesk).check()
-        ewmh.request_active_window_checked(conn, wid, source=2).check()
+        wdesk = ewmh.get_wm_desktop(wid).reply()
+        if wdesk not in ewmh.get_visible_desktops().reply():
+            ewmh.request_current_desktop_checked(wdesk).check()
+        ewmh.request_active_window_checked(wid, source=2).check()
 
 def get_desk(i_or_name):
     if isinstance(i_or_name, int):
@@ -156,9 +155,9 @@ def get_desk(i_or_name):
     assert isinstance(i_or_name, basestring)
     
     nextdesk = None
-    names = ewmh.get_desktop_names(conn, root).reply()
-    ci = ewmh.get_current_desktop(conn, root).reply()
-    visibles = ewmh.get_visible_desktops(conn, root).reply()
+    names = ewmh.get_desktop_names().reply()
+    ci = ewmh.get_current_desktop().reply()
+    visibles = ewmh.get_visible_desktops().reply()
 
     cname = names[ci] if ci < len(names) else ''
     fnames = names[:]
