@@ -1,13 +1,8 @@
 #!/usr/bin/env python2
 
-import sys
-
 import pygtk
 pygtk.require('2.0')
 import gtk
-
-from xpybutil import conn, root
-import xpybutil.ewmh as ewmh
 
 import pagermh.state as state
 import pagermh.pager as pager

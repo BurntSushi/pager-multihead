@@ -1,12 +1,10 @@
-import sys
-
 import gtk
 
-from xpybutil import conn, root
 import xpybutil.ewmh as ewmh
+import xpybutil.rect as rect
 
 import config
-from keymousebind import keybinds, desktop_clicked
+from keymousebind import desktop_clicked
 import state
 
 desktops = []
@@ -63,7 +61,7 @@ def init():
     # This does not allow for between-monitor struts... For another day!
     if config.struts:
         wx, wy, ww, wh = config.x, config.y, config.width, config.height
-        mx, my, mw, mh = state.get_monitor_area((wx, wy, ww, wh))
+        mx, my, mw, mh = rect.get_monitor_area((wx, wy, ww, wh), state.monitors)
         rw, rh = state.root_geom['width'], state.root_geom['height']
 
         struts = { nm: 0 for nm in
@@ -93,8 +91,7 @@ def init():
                 struts['bottom_start_x'] = wx
                 struts['bottom_end_x'] = wx + ww
 
-        ewmh.set_wm_strut_partial_checked(conn, _window.window.xid, 
-                                          **struts).check()
+        ewmh.set_wm_strut_partial_checked(_window.window.xid, **struts).check()
 
 def update_desktop_order():
     if not state.visibles:

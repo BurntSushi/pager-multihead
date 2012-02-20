@@ -1,10 +1,6 @@
-import sys
-
-import gobject
 import gtk
 import pango
 
-from xpybutil import conn, root
 import xpybutil.ewmh as ewmh
 import xpybutil.icccm as icccm
 
@@ -20,8 +16,8 @@ currentPrompt = None
 def desktops(result_fun, prefix_complete=True, homogenous=True):
     global currentPrompt
 
-    desks = range(0, ewmh.get_number_of_desktops(conn, root).reply())
-    names = ewmh.get_desktop_names(conn, root).reply()
+    desks = range(0, ewmh.get_number_of_desktops().reply())
+    names = ewmh.get_desktop_names().reply()
     lst = []
     for d in desks:
         nm = names[d] if d < len(names) else d
@@ -34,8 +30,8 @@ def windows(result_fun, prefix_complete=False, homogenous=False,
             current_desk=False):
     global currentPrompt
 
-    desks = range(0, ewmh.get_number_of_desktops(conn, root).reply())
-    names = ewmh.get_desktop_names(conn, root).reply()
+    desks = range(0, ewmh.get_number_of_desktops().reply())
+    names = ewmh.get_desktop_names().reply()
 
     content = {}
     for d in desks:
@@ -48,15 +44,15 @@ def windows(result_fun, prefix_complete=False, homogenous=False,
 
         content[name] = []
 
-    clients = ewmh.get_client_list_stacking(conn, root).reply()
+    clients = ewmh.get_client_list_stacking().reply()
     for c in reversed(clients):
-        nm = ewmh.get_wm_desktop(conn, c).reply()
+        nm = ewmh.get_wm_desktop(c).reply()
         if nm < len(names):
             nm = names[nm]
         if nm in content:
-            wm_name = ewmh.get_wm_name(conn, c).reply()
+            wm_name = ewmh.get_wm_name(c).reply()
             if not wm_name:
-                wm_name = icccm.get_wm_name(conn, c).reply()
+                wm_name = icccm.get_wm_name(c).reply()
             if not wm_name or not isinstance(wm_name, basestring):
                 wm_name = 'N/A'
             content[nm].append((wm_name, c))

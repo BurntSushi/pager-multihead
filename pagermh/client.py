@@ -1,17 +1,16 @@
-import sys
-
 import gtk
 import xcb
 
-from xpybutil import conn, root
 import xpybutil.ewmh as ewmh
+import xpybutil.rect as rect
 import xpybutil.util as util
+import xpybutil.window as window
 
 import state
 import pager
 
 def update_tracking_clients():
-    clist = ewmh.get_client_list(conn, root).reply()
+    clist = ewmh.get_client_list().reply()
     for c in clist:
         if c not in state.clients:
             track_client(c)
@@ -22,9 +21,9 @@ def update_tracking_clients():
 def track_client(c):
     assert c not in state.clients
 
-    wstate = ewmh.get_wm_state(conn, c).reply()
+    wstate = ewmh.get_wm_state(c).reply()
     for atom in wstate:
-        aname = util.get_atom_name(conn, atom)
+        aname = util.get_atom_name(atom)
         
         # For now, while I decide how to handle these guys
         if aname == '_NET_WM_STATE_STICKY':
@@ -51,9 +50,9 @@ class Client(object):
         self.wid = wid
         self.gdk = gtk.gdk.window_foreign_new_for_display(state.gtk_display, 
                                                           self.wid)
-        self.name = ewmh.get_wm_name(conn, self.wid).reply()
+        self.name = ewmh.get_wm_name(self.wid).reply()
         self.geom = self.get_geometry()
-        self.desk = ewmh.get_wm_desktop(conn, self.wid).reply()
+        self.desk = ewmh.get_wm_desktop(self.wid).reply()
         self.invis = gtk.Invisible()
 
         self.gdk.set_events(gtk.gdk.PROPERTY_CHANGE_MASK
@@ -63,7 +62,7 @@ class Client(object):
 
         # This is interesting; look for configure events on the decor window
         if state.wmname.lower() == 'openbox':
-            pid = util.get_parent_window(conn, self.wid)
+            pid = util.get_parent_window(self.wid)
             pgdk = gtk.gdk.window_foreign_new_for_display(state.gtk_display,
                                                           pid)
             pinvis = gtk.Invisible()
@@ -78,19 +77,16 @@ class Client(object):
     def update_state(self):
         self.hidden = False
         
-        hatom = util.get_atom(conn, '_NET_WM_STATE_HIDDEN')
-        states = ewmh.get_wm_state(conn, self.wid).reply()
+        hatom = util.get_atom('_NET_WM_STATE_HIDDEN')
+        states = ewmh.get_wm_state(self.wid).reply()
         if states is not None and hatom in states:
             self.hidden = True
 
     def get_monitor_area(self):
-        return state.get_monitor_area(self.geom)
+        return rect.get_monitor_area(self.geom, state.monitors)
 
     def get_geometry(self):
-        geom = conn.core.GetGeometry(util.get_parent_window(conn, 
-                                                            self.wid)).reply()
-
-        return geom.x, geom.y, geom.width, geom.height
+        return window.get_geometry(self.wid)
 
     def remove(self):
         pager.update(self.desk)
@@ -106,7 +102,7 @@ class Client(object):
     def cb_prop_change(self, widget, e):
         try:
             if e.atom == '_NET_WM_DESKTOP':
-                newd = ewmh.get_wm_desktop(conn, self.wid).reply()
+                newd = ewmh.get_wm_desktop(self.wid).reply()
                 if newd is not None and newd != self.desk:
                     oldd = self.desk
                     self.desk = newd
