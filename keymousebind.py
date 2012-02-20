@@ -33,7 +33,7 @@ def init():
         keybinds['<Control><Alt>%s' % chr(c)] = mk_set_desktop(chr(c))
         keybinds['<Super><Alt>%s' % chr(c)] = mk_set_activewin_desktop(chr(c))
 
-    keybinds['<Super><Shift>BackSpace'] = remove_empty_current_desktop
+    keybinds['<Super>BackSpace'] = remove_empty_current_desktop
 
     keybinds['<Super>Return'] = mk_prompt_desktop()
     keybinds['<Super><Shift>Return'] = prompt_set_activewin_desktop
@@ -129,7 +129,6 @@ def remove_empty_current_desktop():
     for c in clients:
         cdesk = ewmh.get_wm_desktop(conn, c).reply()
         if cdesk > cur and cdesk != 0xffffffff:
-            print ewmh.get_wm_name(conn, c).reply(), cdesk
             ewmh.set_wm_desktop_checked(conn, c, cdesk - 1).check()
 
     ndesks = ewmh.get_number_of_desktops(conn, root).reply()
@@ -165,8 +164,8 @@ def get_desk(i_or_name):
     fnames = names[:]
 
     if visibles:
-        fnames = [nm for i, nm in
-                  filter(lambda (i, nm): i not in visibles, enumerate(fnames))]
+        not_cur_or_vis = lambda (i, nm): i not in visibles or i == ci
+        fnames = [nm for i, nm in filter(not_cur_or_vis, enumerate(fnames))]
 
     fnames = filter(lambda n: n.lower().startswith(i_or_name.lower()), fnames)
     fnames = sorted(fnames)
