@@ -30,7 +30,6 @@ except:
     print ''
     print 'pager-multihead requires xpybutil'
     print 'See: https://github.com/BurntSushi/xpybutil'
-    sys.exit(1)
 
 try:
     import pygtk
