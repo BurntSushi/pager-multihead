@@ -14,3 +14,6 @@ if not os.access(conffile, os.R_OK):
 
 execfile(conffile)
 
+def desk_views(config):
+    return not hasattr(config, "show_desk_views") or config.show_desk_views
+

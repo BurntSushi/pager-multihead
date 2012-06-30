@@ -16,7 +16,14 @@ desktops = []
 # desktops = map(str, range(1, 10)) 
 
 # Whether to show desktop names below each mini-desktop picture
+# Note that the behavior of pager-multihead when both 'show_desk_names' and
+# 'show_desk_views' are False is undefined.
 show_desk_names = True
+
+# Whether to show desktop viewports (a mini-desktop picture of windows).
+# Note that the behavior of pager-multihead when both 'show_desk_names' and
+# 'show_desk_views' are False is undefined.
+show_desk_views = True
 
 # The geometry of the pager window
 # These should be relative to the *root* window---beware of dead area!

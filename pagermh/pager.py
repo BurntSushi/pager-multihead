@@ -42,15 +42,16 @@ def init():
     _window.modify_bg(gtk.STATE_NORMAL, 
                       gtk.gdk.color_parse(config.pager_bgcolor))
 
+    expand = config.desk_views(config)
     if state.orient == 'H':
-        _box = gtk.HBox(True, 0)
+        _box = gtk.HBox(expand, 0)
     else:
-        _box = gtk.VBox(True, 0)
+        _box = gtk.VBox(expand, 0)
     _window.add(_box)
 
     for i in xrange(state.desk_num):
         d = Desktop(i)
-        _box.pack_start(d.box, True, True, 0)
+        _box.pack_start(d.box, expand, expand, 0)
         desktops.append(d)
 
     update_desktop_order()
@@ -129,9 +130,10 @@ def cb_prop_change(widget, e):
                         lastdesk = i
                 desktops.pop(lastdesk).destroy()
         elif state.desk_num > len(desktops):
+            expand = config.desk_views(config)
             while state.desk_num > len(desktops):
                 d = Desktop(len(desktops))
-                _box.pack_start(d.box, True, True, 0)
+                _box.pack_start(d.box, expand, expand, 0)
                 desktops.append(d)
 
         update_desktop_order()
@@ -140,14 +142,23 @@ def cb_prop_change(widget, e):
 class Desktop(object):
     def __init__(self, desk):
         self.desk = desk
-        self.area = gtk.DrawingArea()
-        self.cmap = self.area.get_colormap()
         self.label = None
         self.eb = None
         self.gc = None
         self.box = gtk.VBox(False, 0)
 
-        self.box.pack_start(self.area, True, True, 0)
+        if config.desk_views(config):
+            self.area = gtk.DrawingArea()
+            self.cmap = self.area.get_colormap()
+            self.box.pack_start(self.area, True, True, 0)
+
+            self.area.add_events(gtk.gdk.EXPOSURE_MASK
+                                 | gtk.gdk.BUTTON_PRESS_MASK)
+            self.area.connect('expose-event', self.cb_exposed)
+            self.area.connect('button_press_event', self.cb_button_press)
+        else:
+            self.area = None
+            self.cmap = None
 
         if config.show_desk_names:
             self.eb = gtk.EventBox()
@@ -157,19 +168,12 @@ class Desktop(object):
             self.eb.add(self.label)
             self.box.pack_start(self.eb, False, False, 2)
 
-        self.area.add_events(gtk.gdk.EXPOSURE_MASK
-                             | gtk.gdk.BUTTON_PRESS_MASK)
-
-        self.area.connect('expose-event', self.cb_exposed)
-        self.area.connect('button_press_event', self.cb_button_press)
         self.box.show_all()
 
     def destroy(self):
         self.box.destroy()
 
     def update(self):
-        x, y, w, h = self.get_pos_size()
-
         if self.label is not None:
             if self.desk == state.desktop:
                 markup = config.active_name_markup
@@ -181,6 +185,10 @@ class Desktop(object):
             self.eb.modify_bg(gtk.STATE_NORMAL,
                               gtk.gdk.color_parse(config.pager_bgcolor))
 
+        if self.area is None:
+            return
+
+        x, y, w, h = self.get_pos_size()
         if self.gc is None:
             self.gc = self.area.window.new_gc()
 
