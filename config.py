@@ -114,9 +114,7 @@ hidden_name_markup = re.sub('\s+', ' ', '''
 # This is applied on *any* desktop (regardless of whether it's active,
 # visible or hidden) that is empty, in addition to the markup matching its
 # active/visible/hidden state.
-empty_name_markup = re.sub('\s+', ' ', '''
-    %s
-''')
+empty_name_markup = '%s'
 
 # This is applied on *any* desktop (regardless of whether it's active,
 # visible or hidden) that is NOT empty, in addition to the markup matching its
@@ -124,9 +122,7 @@ empty_name_markup = re.sub('\s+', ' ', '''
 notempty_name_markup = re.sub('\s+', ' ', '''
     <span 
         weight="bold"
-    >
-    %s
-    </span>
+    >%s</span>
 ''')
 
 
