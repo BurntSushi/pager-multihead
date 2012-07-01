@@ -167,6 +167,7 @@ class Desktop(object):
             self.label = gtk.Label()
             self.eb.add(self.label)
             self.box.pack_start(self.eb, False, False, 2)
+            self.eb.connect('button_press_event', self.cb_button_press)
 
         self.box.show_all()
 
@@ -181,6 +182,24 @@ class Desktop(object):
                 markup = config.visible_name_markup
             else:
                 markup = config.hidden_name_markup
+
+            # If there's no client on this desktop, use appropriate markup.
+            clientsOnDesk = False
+            for cid in state.stacking:
+                if cid not in state.clients:
+                    continue
+
+                c = state.clients[cid]
+
+                if c.desk != self.desk or c.hidden:
+                    continue
+                clientsOnDesk = True
+                break
+            if not clientsOnDesk and hasattr(config, 'empty_name_markup'):
+                markup = markup % config.empty_name_markup
+            elif clientsOnDesk and hasattr(config, 'notempty_name_markup'):
+                markup = markup % config.notempty_name_markup
+
             self.label.set_markup(markup % state.get_desk_name(self.desk))
             self.eb.modify_bg(gtk.STATE_NORMAL,
                               gtk.gdk.color_parse(config.pager_bgcolor))

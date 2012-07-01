@@ -111,6 +111,24 @@ hidden_name_markup = re.sub('\s+', ' ', '''
     </span>
 ''')
 
+# This is applied on *any* desktop (regardless of whether it's active,
+# visible or hidden) that is empty, in addition to the markup matching its
+# active/visible/hidden state.
+empty_name_markup = re.sub('\s+', ' ', '''
+    %s
+''')
+
+# This is applied on *any* desktop (regardless of whether it's active,
+# visible or hidden) that is NOT empty, in addition to the markup matching its
+# active/visible/hidden state.
+notempty_name_markup = re.sub('\s+', ' ', '''
+    <span 
+        weight="bold"
+    >
+    %s
+    </span>
+''')
+
 
 # THEME CONFIGURATION - PROMPT
 ##############################
