@@ -41,7 +41,7 @@ setup(
     url = 'https://github.com/BurntSushi/pager-mutlihead',
     platforms = 'POSIX',
     packages = ['pagermh'],
-    data_files = [('share/doc/pager-multihead', ['README', 'LICENSE']),
+    data_files = [('share/doc/pager-multihead', ['README', 'COPYING', 'INSTALL']),
                   ('/etc/xdg/pager-multihead', 
                    ['config.py', 'keymousebind.py'])],
     scripts = ['pager-multihead']
