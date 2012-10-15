@@ -7,6 +7,7 @@ import keybinder
 import xpybutil
 import xpybutil.ewmh as ewmh
 
+wmname = 'N/A'
 wmrunning = False
 while not wmrunning:
     w = ewmh.get_supporting_wm_check(xpybutil.root).reply()

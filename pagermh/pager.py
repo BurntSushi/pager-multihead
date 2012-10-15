@@ -99,9 +99,14 @@ def update_desktop_order():
         return
     for physind, xscreen in enumerate(state.xtophys):
         for d in desktops:
-            if d.desk == state.visibles[xscreen]:
-                old = desktops[physind]
-                d.desk, old.desk = old.desk, d.desk
+            if state.wmname == 'Wingo':
+                if d.desk == state.visibles[physind]:
+                    old = desktops[physind]
+                    d.desk, old.desk = old.desk, d.desk
+            else:
+                if d.desk == state.visibles[xscreen]:
+                    old = desktops[physind]
+                    d.desk, old.desk = old.desk, d.desk
 
 def update(d):
     if d < len(desktops):
