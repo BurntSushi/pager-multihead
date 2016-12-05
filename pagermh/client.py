@@ -1,6 +1,6 @@
 import gtk
-import xcb
 
+from xpybutil.compat import xproto
 import xpybutil.ewmh as ewmh
 import xpybutil.rect as rect
 import xpybutil.util as util
@@ -96,7 +96,7 @@ class Client(object):
         try:
             self.geom = self.get_geometry()
             pager.update(self.desk)
-        except xcb.xproto.BadWindow:
+        except xproto.BadWindow:
             pass
 
     def cb_prop_change(self, widget, e):
@@ -111,7 +111,7 @@ class Client(object):
             elif e.atom == '_NET_WM_STATE':
                 self.update_state()
                 pager.update(self.desk)
-        except xcb.xproto.BadWindow:
+        except xproto.BadWindow:
             pass
 
 update_tracking_clients()
