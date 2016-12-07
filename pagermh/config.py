@@ -25,10 +25,18 @@ xdg = os.getenv('XDG_CONFIG_HOME') or os.path.join(os.getenv('HOME'), '.config')
 conffile = os.path.join(xdg, 'pager-multihead', 'config.py')
 
 if not os.access(conffile, os.R_OK):
-    conffile = os.path.join('/', 'etc', 'xdg', 'pager-multihead', 'config.py')
-    if not os.access(conffile, os.R_OK):
+    conf_locations = [
+        os.path.join(
+            os.getenv('XDG_CONFIG_HOME'), 'pager-multihead', 'config.py'),
+        os.path.join('/', 'etc', 'xdg', 'pager-multihead', 'config.py'),
+    ]
+    for conffile in conf_locations:
+        if os.access(conffile, os.R_OK):
+            break
+    else:
         print >> sys.stderr, 'UNRECOVERABLE ERROR: ' \
-                             'No configuration file found at %s' % conffile
+                             'No configuration file found in %s' % \
+                             ', '.join(conf_locations)
         sys.exit(1)
 
 execfile(conffile)
