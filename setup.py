@@ -26,8 +26,8 @@ try:
     import keybinder
 except:
     print ''
-    print 'pager-multihead requiers python-keybinder'
-    print 'See: http://kaizer.se/wiki/keybinder/'
+    print 'pager-multihead requires python-keybinder'
+    print 'See: https://github.com/engla/keybinder'
     sys.exit(1)
 
 setup(
