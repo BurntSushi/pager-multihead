@@ -5,6 +5,7 @@ import gtk
 import keybinder
 
 import xpybutil
+from xpybutil.compat import xinerama
 import xpybutil.ewmh as ewmh
 
 wmname = 'N/A'
@@ -22,12 +23,10 @@ while not wmrunning:
     if not wmrunning:
         time.sleep(1)
 
-import xcb.xinerama
-
 import config
 from keymousebind import keybinds
 
-xinerama = xpybutil.conn(xcb.xinerama.key)
+xinerama = xpybutil.conn(xinerama.key)
 
 gtk_display = gtk.gdk.display_get_default()
 gtk_screen = gtk_display.get_default_screen()
